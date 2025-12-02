@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>HERRAMIENTAS - ÁREA 7</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color-scheme: light;
+    }
+    body {
+      margin: 0;
+      background: #f4f5f7;
+      color: #222;
+    }
+    header {
+      background: #003a70;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,.2);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    main {
+      max-width: 1200px;
+      margin: 1.5rem auto;
+      padding: 0 1rem 2rem;
+    }
+
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+      margin-bottom: 1.5rem;
+    }
+    nav a {
+      text-decoration: none;
+      padding: .4rem .8rem;
+      border-radius: 999px;
+      border: 1px solid #ccd1d9;
+      background: white;
+      font-size: .85rem;
+      color: #003a70;
+    }
+    nav a:hover {
+      background: #003a70;
+      color: white;
+    }
+
+    section {
+      background: white;
+      border-radius: .75rem;
+      padding: 1rem 1.25rem 1.25rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,.1);
+    }
+    section h2 {
+      margin-top: 0;
+      font-size: 1.1rem;
+      border-bottom: 1px solid #eceff1;
+      padding-bottom: .4rem;
+    }
+    h3 {
+      margin-bottom: .4rem;
+      margin-top: 1rem;
+      font-size: .95rem;
+      color: #003a70;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit,minmax(260px,1fr));
+      gap: 1rem;
+    }
+    .card {
+      border: 1px solid #e0e4e8;
+      border-radius: .75rem;
+      padding: .75rem 1rem 1rem;
+      background: #fafbfc;
+    }
+    .card.highlight {
+      border-color: #00a300;
+      box-shadow: 0 0 0 1px rgba(0,163,0,.3);
+    }
+    label {
+      display: block;
+      font-size: .8rem;
+      margin-top: .35rem;
+      margin-bottom: .15rem;
+    }
+    input[type="number"],
+    input[type="text"] {
+      width: 100%;
+      box-sizing: border-box;
+      padding: .35rem .45rem;
+      border-radius: .4rem;
+      border: 1px solid #c7ccd1;
+      font-size: .85rem;
+    }
+    input[type="number"]:focus,
+    input[type="text"]:focus {
+      outline: 2px solid #003a70;
+      border-color: #003a70;
+    }
+    .inline-suffix {
+      display: flex;
+      align-items: center;
+      gap: .3rem;
+    }
+    .inline-suffix span {
+      font-size: .8rem;
+      color: #555;
+      white-space: nowrap;
+    }
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: .85rem;
+      margin-top: .2rem;
+    }
+    .result-row strong {
+      font-weight: 600;
+    }
+    .result-row span {
+      text-align: right;
+    }
+    .result-row.total {
+      border-top: 1px dashed #cfd3d8;
+      padding-top: .25rem;
+      margin-top: .35rem;
+      font-weight: 600;
+    }
+    .small {
+      font-size: .75rem;
+      color: #666;
+      margin-top: .3rem;
+    }
+    button {
+      border-radius: 999px;
+      border: 1px solid #003a70;
+      background: #003a70;
+      color: white;
+      padding: .4rem .9rem;
+      font-size: .8rem;
+      cursor: pointer;
+      margin-top: .5rem;
+    }
+    button.secondary {
+      background: white;
+      color: #003a70;
+    }
+    button:hover {
+      filter: brightness(1.05);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .78rem;
+      margin-top: .5rem;
+    }
+    th, td {
+      padding: .25rem .35rem;
+      border-bottom: 1px solid #e3e6ea;
+      text-align: right;
+      white-space: nowrap;
+    }
+    th:first-child, td:first-child {
+      text-align: left;
+    }
+    thead {
+      background: #f0f2f5;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .table-wrapper {
+      max-height: 260px;
+      overflow: auto;
+      border-radius: .5rem;
+      border: 1px solid #e0e4e8;
+      margin-top: .5rem;
+    }
+
+    @media (max-width: 600px) {
+      header {
+        position: static;
+      }
+      .result-row {
+        font-size: .8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div style="display:flex; align-items:center; gap:12px;">
+    <!-- Logo BBVA (SVG inline, ligero) -->
+    <svg width="82" height="22" viewBox="0 0 100 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path fill="white" d="M11.3 2H2v26h9.3c6.2 0 11.3-5.1 11.3-11.3S17.5 2 11.3 2zm0 18.7H7.5v-11h3.7c3 0 5.3 2.4 5.3 5.3s-2.4 5.7-5.2 5.7zM33.4 2h-6.8L17 28h6.8l2-5.9h8.8l2 5.9h6.8L33.4 2zm-5.2 14.7l2.4-7.1 2.4 7.1h-4.8zM52.5 2h-6.3v26h6.3V2zM69.1 2h-5.9L50.9 28h6.5l7.8-20.2 7.8 20.2h6.5L69.1 2z"/>
+    </svg>
+    <div>
+      <h1 style="margin:0; font-size:1.2rem;">HERRAMIENTAS - ÁREA 7</h1>
+      <small style="opacity:.85;">Uso interno</small>
+    </div>
+  </div>
+</header>
+
+<main>
+  <nav>
+    <a href="#comparador">Comparador de Préstamos</a>
+    <a href="#prestamo-simple">Calculadora Préstamo</a>
+    <a href="#nominas">Calculadora de Nóminas</a>
+    <a href="#iban">Calculadora IBAN</a>
+  </nav>
+
+  <!-- COMPARADOR DOS PRÉSTAMOS -->
+  <section id="comparador">
+    <h2>Comparador de Préstamos</h2>
+    <p class="small">
+      Introduce los datos de dos operaciones para ver cuota, coste total y TAE (incluye solo comisión de apertura como gasto inicial).
+      El seguro se suma al coste total para comparar opciones.
+    </p>
+    <div class="grid-2">
+      <div class="card" id="loan1-card">
+        <h3>Préstamo 1</h3>
+        <label>Importe</label>
+        <div class="inline-suffix">
+          <input type="number" id="p1_importe" min="0" step="0.01" value="30000">
+          <span>€</span>
+        </div>
+
+        <label>Plazo</label>
+        <div class="inline-suffix">
+          <input type="number" id="p1_plazo" min="1" step="1" value="120">
+          <span>meses</span>
+        </div>
+
+        <label>Interés anual nominal</label>
+        <div class="inline-suffix">
+          <input type="number" id="p1_interes" min="0" step="0.01" value="3.5">
+          <span>%</span>
+        </div>
+
+        <label>Comisión apertura</label>
+        <div class="inline-suffix">
+          <input type="number" id="p1_apertura" min="0" step="0.01" value="0.5">
+          <span>% sobre importe</span>
+        </div>
+
+        <label>Seguro (prima anual)</label>
+        <div class="inline-suffix">
+          <input type="number" id="p1_seguro" min="0" step="0.01" value="0">
+          <span>€</span>
+        </div>
+
+        <div class="result-row">
+          <span>Cuota mensual:</span>
+          <strong id="p1_cuota">-</strong>
+        </div>
+        <div class="result-row">
+          <span>Coste apertura:</span>
+          <span id="p1_coste_apertura">-</span>
+        </div>
+        <div class="result-row">
+          <span>Coste seguro:</span>
+          <span id="p1_coste_seguro">-</span>
+        </div>
+        <div class="result-row">
+          <span>Total intereses:</span>
+          <span id="p1_intereses">-</span>
+        </div>
+        <div class="result-row total">
+          <span>Coste total:</span>
+          <span id="p1_coste_total">-</span>
+        </div>
+        <div class="result-row">
+          <span>TAE aproximada:</span>
+          <span id="p1_tae">-</span>
+        </div>
+
+        <button type="button" onclick="showAmortizationFrom('1')">Ver amortización</button>
+      </div>
+
+      <div class="card" id="loan2-card">
+        <h3>Préstamo 2</h3>
+        <label>Importe</label>
+        <div class="inline-suffix">
+          <input type="number" id="p2_importe" min="0" step="0.01" value="30000">
+          <span>€</span>
+        </div>
+
+        <label>Plazo</label>
+        <div class="inline-suffix">
+          <input type="number" id="p2_plazo" min="1" step="1" value="120">
+          <span>meses</span>
+        </div>
+
+        <label>Interés anual nominal</label>
+        <div class="inline-suffix">
+          <input type="number" id="p2_interes" min="0" step="0.01" value="3.5">
+          <span>%</span>
+        </div>
+
+        <label>Comisión apertura</label>
+        <div class="inline-suffix">
+          <input type="number" id="p2_apertura" min="0" step="0.01" value="0.5">
+          <span>% sobre importe</span>
+        </div>
+
+        <label>Seguro (prima anual)</label>
+        <div class="inline-suffix">
+          <input type="number" id="p2_seguro" min="0" step="0.01" value="0">
+          <span>€</span>
+        </div>
+
+        <div class="result-row">
+          <span>Cuota mensual:</span>
+          <strong id="p2_cuota">-</strong>
+        </div>
+        <div class="result-row">
+          <span>Coste apertura:</span>
+          <span id="p2_coste_apertura">-</span>
+        </div>
+        <div class="result-row">
+          <span>Coste seguro:</span>
+          <span id="p2_coste_seguro">-</span>
+        </div>
+        <div class="result-row">
+          <span>Total intereses:</span>
+          <span id="p2_intereses">-</span>
+        </div>
+        <div class="result-row total">
+          <span>Coste total:</span>
+          <span id="p2_coste_total">-</span>
+        </div>
+        <div class="result-row">
+          <span>TAE aproximada:</span>
+          <span id="p2_tae">-</span>
+        </div>
+
+        <button type="button" onclick="showAmortizationFrom('2')">Ver amortización</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRÉSTAMO SIMPLE -->
+  <section id="prestamo-simple">
+    <h2>Calculadora de Préstamo</h2>
+    <div class="grid-2">
+      <div class="card">
+        <label>Capital del préstamo</label>
+        <div class="inline-suffix">
+          <input type="number" id="s_capital" min="0" step="0.01" value="30000">
+          <span>€</span>
+        </div>
+
+        <label>Tipo de interés anual</label>
+        <div class="inline-suffix">
+          <input type="number" id="s_interes" min="0" step="0.01" value="3.5">
+          <span>%</span>
+        </div>
+
+        <label>Plazo</label>
+        <div class="inline-suffix">
+          <input type="number" id="s_plazo" min="1" step="1" value="120">
+          <span>meses</span>
+        </div>
+
+        <div class="result-row">
+          <span>Cuota mensual:</span>
+          <strong id="s_cuota">-</strong>
+        </div>
+        <div class="result-row">
+          <span>Total capital:</span>
+          <span id="s_total_capital">-</span>
+        </div>
+        <div class="result-row">
+          <span>Total intereses:</span>
+          <span id="s_total_intereses">-</span>
+        </div>
+        <div class="result-row total">
+          <span>Coste total:</span>
+          <span id="s_coste_total">-</span>
+        </div>
+
+        <button type="button" onclick="calcSingleLoan()">Calcular</button>
+      </div>
+      <div>
+        <h3>Cuadro de amortización</h3>
+        <div class="table-wrapper" id="s_table_wrapper"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NÓMINAS (sin tocar la lógica) -->
+  <section id="nominas">
+    <h2>Calculadora de Nóminas (media fija / variable)</h2>
+    <div class="grid-2">
+      <div class="card">
+        <h3>Conceptos Fijos</h3>
+        <label>Salario Base</label>
+        <input type="number" id="f_salario" step="0.01" value="0">
+        <label>Pagas extra prorrateadas</label>
+        <input type="number" id="f_pagase" step="0.01" value="0">
+        <label>Antigüedad / Trienios / Sexenios</label>
+        <input type="number" id="f_antiguedad" step="0.01" value="0">
+        <label>Plus convenio</label>
+        <input type="number" id="f_convenio" step="0.01" value="0">
+        <label>Complemento destino / puesto / cargo</label>
+        <input type="number" id="f_destino" step="0.01" value="0">
+        <label>Complemento polivalencia</label>
+        <input type="number" id="f_polivalencia" step="0.01" value="0">
+        <label>Complemento específico</label>
+        <input type="number" id="f_especifico" step="0.01" value="0">
+        <label>Complemento actividad</label>
+        <input type="number" id="f_actividad" step="0.01" value="0">
+
+        <div class="result-row total">
+          <span>TOTAL FIJO BRUTO:</span>
+          <span id="f_total">0,00 €</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Conceptos Variables (por nómina)</h3>
+        <label>Variable 1</label>
+        <input type="number" id="v1" step="0.01" value="0">
+        <label>Variable 2</label>
+        <input type="number" id="v2" step="0.01" value="0">
+        <label>Variable 3</label>
+        <input type="number" id="v3" step="0.01" value="0">
+        <label>Variable 4</label>
+        <input type="number" id="v4" step="0.01" value="0">
+        <label>Variable 5</label>
+        <input type="number" id="v5" step="0.01" value="0">
+        <label>Variable 6</label>
+        <input type="number" id="v6" step="0.01" value="0">
+
+        <div class="result-row">
+          <span>TOTAL VARIABLE BRUTO:</span>
+          <span id="v_total">0,00 €</span>
+        </div>
+
+        <div class="result-row total">
+          <span>BRUTO TOTAL:</span>
+          <span id="n_bruto">0,00 €</span>
+        </div>
+
+        <label style="margin-top:.6rem;">TOTAL Deducciones (SS + IRPF + otros)</label>
+        <input type="number" id="n_deducciones" step="0.01" value="0">
+
+        <div class="result-row">
+          <span>NETO:</span>
+          <span id="n_neto">0,00 €</span>
+        </div>
+
+        <label style="margin-top:.6rem;">Nº de nóminas consideradas (para medias)</label>
+        <input type="number" id="n_meses" min="1" step="1" value="12">
+
+        <div class="result-row small">
+          <span>Media fijos:</span>
+          <span id="n_media_fijos">0,00 €</span>
+        </div>
+        <div class="result-row small">
+          <span>Media variables:</span>
+          <span id="n_media_variables">0,00 €</span>
+        </div>
+        <div class="result-row small">
+          <span>Media total:</span>
+          <span id="n_media_total">0,00 €</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- IBAN -->
+  <section id="iban">
+    <h2>Calculadora IBAN (España)</h2>
+    <div class="grid-2">
+      <div class="card">
+        <label>Número de Cuenta (CCC) – 20 dígitos (BBBBSSSSCCAAAAAAAAAA)</label>
+        <input type="text" id="ccc" maxlength="24" placeholder="Ej: 01820201234567890123">
+        <div class="result-row total">
+          <span>IBAN resultante:</span>
+          <span id="iban_result">-</span>
+        </div>
+        <button type="button" onclick="calcIBAN()">Calcular IBAN</button>
+        <p class="small">
+          Solo válido para cuentas españolas (ES). No valida que exista la cuenta, solo que la estructura del IBAN sea correcta.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cuadro amortización comparador -->
+  <section id="amortizacion">
+    <h2>Cuadro de Amortización (Comparador)</h2>
+    <p class="small" id="amort_info">Selecciona “Ver amortización” en alguno de los préstamos.</p>
+    <div class="table-wrapper" id="amort_table_wrapper"></div>
+  </section>
+</main>
+
+<script>
+  function parseNum(val) {
+    if (typeof val === 'number') return val;
+    if (!val) return 0;
+    return parseFloat(String(val).replace(',', '.')) || 0;
+  }
+
+  function formatMoney(n) {
+    return n.toLocaleString('es-ES', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' €';
+  }
+
+  // Cálculo préstamo con seguro sumado al coste total, pero NO en TAE
+  function calcLoan(imported, plazo, interesAnual, comAperturaPct, seguroPrimaAnual) {
+    const P = parseNum(imported);
+    const n = parseNum(plazo);
+    const iAnual = parseNum(interesAnual) / 100;
+    const aperturaPct = parseNum(comAperturaPct) / 100;
+    const seguro = parseNum(seguroPrimaAnual);
+
+    if (P <= 0 || n <= 0) return null;
+
+    const iMensual = iAnual / 12;
+    let cuota;
+    if (iMensual === 0) {
+      cuota = P / n;
+    } else {
+      const factor = Math.pow(1 + iMensual, -n);
+      cuota = P * iMensual / (1 - factor);
+    }
+
+    const costeApertura = P * aperturaPct;
+    const costeSeguro = seguro; // coste único
+    const totalCuotas = cuota * n;
+    const totalIntereses = totalCuotas - P;
+    const costeTotal = totalIntereses + costeApertura + costeSeguro;
+
+    // TAE: solo comisión de apertura como gasto inicial
+    const flujoInicial = P - costeApertura;
+    const irrMensual = computeIRR(flujoInicial, cuota, n);
+    const tae = irrMensual != null ? (Math.pow(1 + irrMensual, 12) - 1) : null;
+
+    return {
+      cuota,
+      costeApertura,
+      costeSeguro,
+      totalIntereses,
+      costeTotal,
+      taeMensual: irrMensual,
+      tae
+    };
+  }
+
+  // Búsqueda binaria para TIR mensual
+  function computeIRR(flujoInicial, cuota, n) {
+    if (flujoInicial <= 0 || cuota <= 0 || n <= 0) return null;
+    let low = 0, high = 1; // 0% a 100% mensual
+    const target = 0;
+    for (let iter = 0; iter < 60; iter++) {
+      const mid = (low + high) / 2;
+      let npv = flujoInicial;
+      for (let t = 1; t <= n; t++) {
+        npv -= cuota / Math.pow(1 + mid, t);
+      }
+      if (Math.abs(npv - target) < 1e-6) return mid;
+      if (npv > 0) {
+        low = mid;
+      } else {
+        high = mid;
+      }
+    }
+    return (low + high) / 2;
+  }
+
+  function updateComparator() {
+    const l1 = calcLoan(
+      document.getElementById('p1_importe').value,
+      document.getElementById('p1_plazo').value,
+      document.getElementById('p1_interes').value,
+      document.getElementById('p1_apertura').value,
+      document.getElementById('p1_seguro').value
+    );
+    const l2 = calcLoan(
+      document.getElementById('p2_importe').value,
+      document.getElementById('p2_plazo').value,
+      document.getElementById('p2_interes').value,
+      document.getElementById('p2_apertura').value,
+      document.getElementById('p2_seguro').value
+    );
+
+    const card1 = document.getElementById('loan1-card');
+    const card2 = document.getElementById('loan2-card');
+    card1.classList.remove('highlight');
+    card2.classList.remove('highlight');
+
+    if (l1) {
+      document.getElementById('p1_cuota').textContent = formatMoney(l1.cuota);
+      document.getElementById('p1_coste_apertura').textContent = formatMoney(l1.costeApertura);
+      document.getElementById('p1_coste_seguro').textContent = formatMoney(l1.costeSeguro);
+      document.getElementById('p1_intereses').textContent = formatMoney(l1.totalIntereses);
+      document.getElementById('p1_coste_total').textContent = formatMoney(l1.costeTotal);
+      document.getElementById('p1_tae').textContent = l1.tae != null
+        ? (l1.tae * 100).toFixed(2).replace('.', ',') + ' %'
+        : '-';
+    } else {
+      document.getElementById('p1_cuota').textContent = '-';
+      document.getElementById('p1_coste_apertura').textContent = '-';
+      document.getElementById('p1_coste_seguro').textContent = '-';
+      document.getElementById('p1_intereses').textContent = '-';
+      document.getElementById('p1_coste_total').textContent = '-';
+      document.getElementById('p1_tae').textContent = '-';
+    }
+
+    if (l2) {
+      document.getElementById('p2_cuota').textContent = formatMoney(l2.cuota);
+      document.getElementById('p2_coste_apertura').textContent = formatMoney(l2.costeApertura);
+      document.getElementById('p2_coste_seguro').textContent = formatMoney(l2.costeSeguro);
+      document.getElementById('p2_intereses').textContent = formatMoney(l2.totalIntereses);
+      document.getElementById('p2_coste_total').textContent = formatMoney(l2.costeTotal);
+      document.getElementById('p2_tae').textContent = l2.tae != null
+        ? (l2.tae * 100).toFixed(2).replace('.', ',') + ' %'
+        : '-';
+    } else {
+      document.getElementById('p2_cuota').textContent = '-';
+      document.getElementById('p2_coste_apertura').textContent = '-';
+      document.getElementById('p2_coste_seguro').textContent = '-';
+      document.getElementById('p2_intereses').textContent = '-';
+      document.getElementById('p2_coste_total').textContent = '-';
+      document.getElementById('p2_tae').textContent = '-';
+    }
+
+    if (l1 && l2) {
+      if (l1.costeTotal < l2.costeTotal) {
+        card1.classList.add('highlight');
+      } else if (l2.costeTotal < l1.costeTotal) {
+        card2.classList.add('highlight');
+      }
+    }
+  }
+
+  // Escuchamos cambios en los campos del comparador
+  [
+    'p1_importe','p1_plazo','p1_interes','p1_apertura','p1_seguro',
+    'p2_importe','p2_plazo','p2_interes','p2_apertura','p2_seguro'
+  ].forEach(id => {
+    document.addEventListener('input', e => {
+      if (e.target.id === id) updateComparator();
+    }, true);
+  });
+
+  function buildAmortizationTable(P, n, iAnual) {
+    const capital = parseNum(P);
+    const meses = parseNum(n);
+    const iMensual = parseNum(iAnual) / 100 / 12;
+    if (capital <= 0 || meses <= 0) return null;
+
+    let cuota;
+    if (iMensual === 0) {
+      cuota = capital / meses;
+    } else {
+      const factor = Math.pow(1 + iMensual, -meses);
+      cuota = capital * iMensual / (1 - factor);
+    }
+
+    let saldo = capital;
+    const rows = [];
+    for (let mes = 1; mes <= meses; mes++) {
+      const intereses = iMensual === 0 ? 0 : saldo * iMensual;
+      let amort = cuota - intereses;
+      if (mes === meses) {
+        amort = saldo;
+      }
+      const cuotaReal = intereses + amort;
+      saldo = saldo - amort;
+      rows.push({
+        mes,
+        cuota: cuotaReal,
+        capital: amort,
+        intereses,
+        pendiente: Math.max(saldo, 0)
+      });
+    }
+    return {cuota, rows};
+  }
+
+  function renderAmortization(wrapperId, data) {
+    const wrapper = document.getElementById(wrapperId);
+    if (!data) {
+      wrapper.innerHTML = '';
+      return;
+    }
+    const {rows} = data;
+    let html = '<table><thead><tr>' +
+      '<th>Mes</th><th>Cuota</th><th>Capital</th><th>Intereses</th><th>Capital pendiente</th>' +
+      '</tr></thead><tbody>';
+    rows.forEach(r => {
+      html += `<tr>
+        <td>${r.mes}</td>
+        <td>${formatMoney(r.cuota)}</td>
+        <td>${formatMoney(r.capital)}</td>
+        <td>${formatMoney(r.intereses)}</td>
+        <td>${formatMoney(r.pendiente)}</td>
+      </tr>`;
+    });
+    html += '</tbody></table>';
+    wrapper.innerHTML = html;
+  }
+
+  function showAmortizationFrom(which) {
+    const importe = document.getElementById(`p${which}_importe`).value;
+    const plazo = document.getElementById(`p${which}_plazo`).value;
+    const interes = document.getElementById(`p${which}_interes`).value;
+    const data = buildAmortizationTable(importe, plazo, interes);
+    renderAmortization('amort_table_wrapper', data);
+    const info = document.getElementById('amort_info');
+    info.textContent = `Préstamo ${which}: capital ${formatMoney(parseNum(importe))}, plazo ${plazo} meses, interés ${interes}% anual.`;
+    document.getElementById('amortizacion').scrollIntoView({behavior: 'smooth'});
+  }
+
+  function calcSingleLoan() {
+    const cap = document.getElementById('s_capital').value;
+    const plazo = document.getElementById('s_plazo').value;
+    const interes = document.getElementById('s_interes').value;
+    const data = buildAmortizationTable(cap, plazo, interes);
+    if (!data) return;
+    const totalCuota = data.cuota * parseNum(plazo);
+    const capital = parseNum(cap);
+    const intereses = totalCuota - capital;
+    document.getElementById('s_cuota').textContent = formatMoney(data.cuota);
+    document.getElementById('s_total_capital').textContent = formatMoney(capital);
+    document.getElementById('s_total_intereses').textContent = formatMoney(intereses);
+    document.getElementById('s_coste_total').textContent = formatMoney(totalCuota);
+    renderAmortization('s_table_wrapper', data);
+  }
+
+  function updateNominas() {
+    const f_campos = [
+      'f_salario','f_pagase','f_antiguedad','f_convenio',
+      'f_destino','f_polivalencia','f_especifico','f_actividad'
+    ];
+    let f_total = 0;
+    f_campos.forEach(id => f_total += parseNum(document.getElementById(id).value));
+    document.getElementById('f_total').textContent = formatMoney(f_total);
+
+    const v_campos = ['v1','v2','v3','v4','v5','v6'];
+    let v_total = 0;
+    v_campos.forEach(id => v_total += parseNum(document.getElementById(id).value));
+    document.getElementById('v_total').textContent = formatMoney(v_total);
+
+    const bruto = f_total + v_total;
+    document.getElementById('n_bruto').textContent = formatMoney(bruto);
+
+    const ded = parseNum(document.getElementById('n_deducciones').value);
+    const neto = bruto - ded;
+    document.getElementById('n_neto').textContent = formatMoney(neto);
+
+    const meses = Math.max(1, parseInt(document.getElementById('n_meses').value || '1', 10));
+    document.getElementById('n_media_fijos').textContent = formatMoney(f_total / meses);
+    document.getElementById('n_media_variables').textContent = formatMoney(v_total / meses);
+    document.getElementById('n_media_total').textContent = formatMoney(bruto / meses);
+  }
+
+  const nominaIds = [
+    'f_salario','f_pagase','f_antiguedad','f_convenio',
+    'f_destino','f_polivalencia','f_especifico','f_actividad',
+    'v1','v2','v3','v4','v5','v6',
+    'n_deducciones','n_meses'
+  ];
+  document.addEventListener('input', e => {
+    if (nominaIds.includes(e.target.id)) updateNominas();
+  }, true);
+
+  // CCC -> IBAN ES
+  function calcIBAN() {
+    let ccc = document.getElementById('ccc').value;
+    ccc = ccc.replace(/\s+/g, '');
+    if (!/^\d{20}$/.test(ccc)) {
+      document.getElementById('iban_result').textContent = 'CCC inválido (deben ser 20 dígitos)';
+      return;
+    }
+    const bban = ccc;
+    const country = 'ES';
+    const countryNumeric = '14' + '28'; // E=14, S=28
+    const rearranged = bban + countryNumeric + '00';
+
+    let remainder = 0;
+    for (let i = 0; i < rearranged.length; i++) {
+      const digit = parseInt(rearranged[i], 10);
+      remainder = (remainder * 10 + digit) % 97;
+    }
+    const checkDigits = String(98 - remainder).padStart(2, '0');
+    const iban = country + checkDigits + bban;
+    document.getElementById('iban_result').textContent = iban.replace(/(.{4})/g, '$1 ').trim();
+  }
+
+  // Inicializar
+  updateComparator();
+  calcSingleLoan();
+  updateNominas();
+</script>
+</body>
+</html>
